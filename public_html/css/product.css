@@ -43,17 +43,15 @@
   --font-iceberg: "Iceberg", cursive;
   --font-walpoet: "Wallpoet", sans-serif;
   --font-twentieth-century: "Twentieth Century", sans-serif;
-  --shadow-first:
-    6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(255, 255, 255, 0.6);
-  --shadow-second:
-    6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(255, 255, 255, 0.6),
-    inset 2px 2px 10px rgba(0, 0, 0, 1),
-    inset -1px -1px 5px rgba(255, 255, 255, 0.6);
+  --shadow-first: 6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(111, 0, 255, 0.6);
+  --shadow-second: 6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(255, 255, 255, 0.6), inset 2px 2px 10px rgba(0, 0, 0, 1), inset -1px -1px 5px rgba(255, 255, 255, 0.6);
   --articel-bg: #cbd5e1;
   --zx-yellow: #eab308;
 }
 #product .form-control,
-#product .form-select {
+#product .form-select,
+#editProductModal .form-control,
+#editProductModal .form-select {
   color: var(--zx-violet);
   border: 2px solid var(--zx-violet);
   box-shadow: none;
@@ -61,9 +59,10 @@
   background: var(--text-white);
 }
 
-#product label {
+#product label,
+#editProductModal label {
   color: var(--zx-violet);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 #product .card {
@@ -74,14 +73,16 @@
   padding: 1rem;
 }
 
-#product .btnReset{
+#product .btnReset,
+#editProductModal .btnReset {
   background: var(--zx-red);
   color: var(--text-white);
   border: 2px solid var(--zx-red);
   border-radius: 10px;
   padding: 0.5rem;
 }
-#product .btnReset:hover {
+#product .btnReset:hover,
+#editProductModal .btnReset:hover {
   background: var(--text-white);
   color: var(--zx-red);
   border: 2px solid var(--zx-red);
@@ -93,6 +94,18 @@
   border: 2px solid var(--zx-violet);
   border-radius: 10px;
   padding: 0.5rem;
+}
+#editProductModal .btnSubmit {
+  background: var(--zx-green);
+  color: var(--text-white);
+  border: 2px solid var(--zx-green);
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+#editProductModal .btnSubmit:hover {
+  background: var(--text-white);
+  color: var(--zx-green);
+  border: 2px solid var(--zx-green);
 }
 #product .btnSubmit:hover {
   background: var(--text-white);
@@ -112,7 +125,8 @@
 }
 #product h5,
 #emptyState i,
-#product h4 {
+#product h4,
+#editProductModal h4 {
   color: var(--zx-violet);
 }
 
@@ -184,25 +198,14 @@
   padding-right: 5px;
 }
 
-
-
-
-
-
-
-.btnReset {
-  background: var(--zx-red);
-  color: var(--text-white);
-  border: 2px solid var(--zx-red);
-  border-radius: 10px;
-  padding: 0.5rem;
+#editProductModal {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
 }
-
-
-
-
-
-
-
-
-
+#editProductModal .modal-content {
+  background: var(--text-steal);
+  border: 2px solid var(--zx-violet);
+  box-shadow: var(--shadow-first);
+  border-radius: 1rem;
+  padding: 1rem;
+}

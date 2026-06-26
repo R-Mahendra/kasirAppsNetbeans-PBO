@@ -101,7 +101,7 @@ function renderProductTable() {
         <div class="col-lg-2 zxproductTableBody">
           <button
             class="btn btn-sm btn-warning"
-            onclick="alert('Fitur edit belum tersedia di versi static ini.');">
+            onclick="openEditModal('${key.id}')">
             Edit <i class="bi bi-pencil"></i>
           </button>
 
@@ -216,12 +216,86 @@ function validateForm(nama, price, category) {
   return true;
 }
 
+const start = 2025;
+const now = new Date().getFullYear();
+
+const copyEl = document.getElementById("copy");
+if (copyEl) {
+  copyEl.innerHTML = "copyright &copy; " + (start === now ? start : start + " - " + now) + " All rights reserved.";
+}
+
+// EDIT MODAL
+function openEditModal(id) {
+  const products = loadCustomProducts();
+  const product = products.find((p) => p.id === id);
+
+  if (!product) return;
+
+  document.getElementById("editId").value = product.id;
+  document.getElementById("editNama").value = product.nama;
+  document.getElementById("editPrice").value = product.price;
+  document.getElementById("editImg").value = product.img;
+  document.getElementById("editCategory").value = product.category;
+
+  const preview = document.getElementById("editImgPreview");
+  const placeholder = document.getElementById("editImgPlaceholder");
+
+  if (product.img) {
+    preview.src = product.img;
+    preview.classList.remove("d-none");
+    placeholder.classList.add("d-none");
+
+    preview.onerror = () => {
+      preview.src = "/static/default.jpg";
+    };
+  } else {
+    preview.classList.add("d-none");
+    placeholder.classList.remove("d-none");
+  }
+
+  new bootstrap.Modal(document.getElementById("editProductModal")).show();
+  console.log(product);
+  console.log(document.getElementById("editId").value);
+}
+
+function initEditImagePreview() {
+  const input = document.getElementById("editImg");
+  const preview = document.getElementById("editImgPreview");
+  const placeholder = document.getElementById("editImgPlaceholder");
+
+  if (!input) return;
+
+  input.addEventListener("input", () => {
+    const url = input.value.trim();
+
+    if (url) {
+      preview.src = url;
+      preview.classList.remove("d-none");
+      placeholder.classList.add("d-none");
+
+      preview.onerror = () => {
+        preview.src = "/static/default.jpg";
+      };
+    } else {
+      preview.classList.add("d-none");
+      placeholder.classList.remove("d-none");
+    }
+  });
+}
+
+// Update product
+// ==============================
+// UPDATE PRODUCT
+// ==============================
+const editForm = document.getElementById("editProductForm");
+
 // ========================================================================
 // SUBMIT FORM — TAMBAH PRODUK BARU
 // ========================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
   initImagePreview();
+  initEditImagePreview();
   renderProductTable();
 
   const form = document.getElementById("addProductForm");
@@ -273,11 +347,54 @@ document.addEventListener("DOMContentLoaded", () => {
     renderProductTable();
     showToast(`Produk "${nama}" berhasil ditambahkan!`, "success");
   });
-});
-const start = 2025;
-const now = new Date().getFullYear();
 
-const copyEl = document.getElementById("copy");
-if (copyEl) {
-  copyEl.innerHTML = "copyright &copy; " + (start === now ? start : start + " - " + now) + " All rights reserved.";
-}
+  if (editForm) {
+    editForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const id = document.getElementById("editId").value;
+      const nama = document.getElementById("editNama").value.trim();
+      const price = Number(document.getElementById("editPrice").value);
+      const img = document.getElementById("editImg").value.trim();
+      const category = document.getElementById("editCategory").value;
+
+      if (!validateForm(nama, price, category)) return;
+
+      const products = loadCustomProducts();
+      // ==============================
+      // Cek duplikat (kecuali produk yang sedang diedit)
+      // ==============================
+      const isDuplicate = products.some((p) => p.id !== id && p.nama.toLowerCase() === nama.toLowerCase() && p.category === category);
+
+      if (isDuplicate) {
+        showToast(`Produk "${nama}" sudah ada di kategori ${category}!`, "warning");
+        return;
+      }
+
+      const index = products.findIndex((p) => p.id === id);
+
+      if (index === -1) {
+        showToast("Produk tidak ditemukan!", "danger");
+        return;
+      }
+
+      products[index] = {
+        ...products[index],
+        nama,
+        price,
+        img: img || "/static/default.jpg",
+        category,
+      };
+
+      saveCustomProducts(products);
+
+      renderProductTable();
+
+      const modal = bootstrap.Modal.getInstance(document.getElementById("editProductModal"));
+
+      if (modal) modal.hide();
+
+      showToast("Produk berhasil diperbarui!", "success");
+    });
+  }
+});
