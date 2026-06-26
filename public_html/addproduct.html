@@ -38,7 +38,7 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse d-flex justify-content-end align-items-center" id="zxNavlist">
-          <a href="#" disabled class="navbar-brand fs-4">Zhaenx_Admin</a>
+          <a href="#" disabled class="navbar-brand fs-5">Zhaenx_Admin</a>
         </div>
       </div>
     </nav>
@@ -91,7 +91,7 @@
                     </div>
                     <!-- Preview Gambar -->
                     <div class="text-center">
-                      <p class="form-label fw-semibold mb-1">Preview Gambar</p>
+                      <p class="form-label mb-1 PreviewText">Preview Gambar</p>
                       <img id="imgPreview" src="" alt="Preview" class="img-thumbnail d-none" style="width: 120px; height: 120px; object-fit: cover" />
                       <div id="imgPlaceholder" class="imgPlaceholder">
                         <i class="bi bi-image fs-1"></i>
@@ -117,8 +117,8 @@
 
             <!-- Empty state -->
             <div id="emptyState" class="text-muted">
-              <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-              <h5>Belum ada produk yang ditambahkan.</h5>
+              <i class="bi bi-inbox fs-1 d-block mb-0"></i>
+              <h5 class="mb-0">Belum ada produk yang ditambahkan.</h5>
             </div>
           </div>
         </div>
@@ -167,7 +167,7 @@
               </div>
 
               <div class="text-center">
-                <p class="form-label fw-semibold mb-2">Preview Gambar</p>
+                <p class="form-label mb-2 PreviewText">Preview Gambar</p>
 
                 <img id="editImgPreview" src="" alt="Preview" class="img-thumbnail d-none" style="width: 120px; height: 120px; object-fit: cover" />
 
@@ -194,6 +194,35 @@
               <button class="btn btnSubmit" type="submit"><i class="bi bi-floppy2-fill"></i> Update</button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Delete -->
+    <div class="modal fade" id="deleteProductModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-trash3"></i>
+              Hapus Produk
+            </h5>
+
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          </div>
+
+          <div class="modal-body text-center">
+            <i class="bi bi-exclamation-triangle-fill text-warning fs-1"></i>
+
+            <p class="mt-3 mb-0">Yakin ingin menghapus produk ini?</p>
+
+            <small class="text-muted"> Data yang dihapus tidak dapat dikembalikan. </small>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+
+            <button class="btn btn-danger" id="confirmDeleteBtn">Ya, Hapus</button>
+          </div>
         </div>
       </div>
     </div>

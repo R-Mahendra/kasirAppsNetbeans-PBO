@@ -87,6 +87,10 @@
   color: var(--zx-red);
   border: 2px solid var(--zx-red);
 }
+#product .PreviewText {
+  color: var(--zx-violet);
+  font-weight: 500;
+}
 
 #product .btnSubmit {
   background: var(--zx-violet);

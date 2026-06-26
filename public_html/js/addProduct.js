@@ -13,7 +13,14 @@
 // ========================================================================
 
 const CUSTOM_PRODUCTS_KEY = "kasir_custom_products";
+let deleteProductId = null;
+function openDeleteModal(id) {
+  deleteProductId = id;
 
+  const modal = new bootstrap.Modal(document.getElementById("deleteProductModal"));
+
+  modal.show();
+}
 // ========================================================================
 // AUTH GUARD
 // ========================================================================
@@ -107,7 +114,7 @@ function renderProductTable() {
 
           <button
             class="btn btn-sm btn-danger"
-            onclick="deleteProduct('${key.id}')">
+            onclick="openDeleteModal('${key.id}')">
             Delete <i class="bi bi-trash"></i>
           </button>
 
@@ -155,7 +162,7 @@ function showToast(message, type = "success") {
 
   const toast = document.createElement("div");
   toast.id = "addProductToast";
-  toast.className = `toast align-items-center text-white border-0 show position-fixed top-0 end-0 m-4 ${colorMap[type] || "bg-success"}`;
+  toast.className = `toast align-items-center text-white border-0 show position-fixed top-0 end-0 m-5 ${colorMap[type] || "bg-success"}`;
   toast.style.zIndex = "9999";
   toast.setAttribute("role", "alert");
   toast.innerHTML = `
@@ -168,7 +175,7 @@ function showToast(message, type = "success") {
 
   setTimeout(() => {
     if (toast.parentNode) toast.remove();
-  }, 3000);
+  }, 4000);
 }
 
 // ========================================================================
@@ -400,6 +407,25 @@ document.addEventListener("DOMContentLoaded", () => {
       if (modal) modal.hide();
 
       showToast("Produk berhasil diperbarui!", "success");
+    });
+  }
+
+  // Delete product from modal
+  const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", () => {
+      let products = loadCustomProducts();
+
+      products = products.filter((p) => p.id !== deleteProductId);
+
+      saveCustomProducts(products);
+
+      renderProductTable();
+
+      bootstrap.Modal.getInstance(document.getElementById("deleteProductModal")).hide();
+
+      showToast("Produk berhasil dihapus!", "danger");
     });
   }
 });
