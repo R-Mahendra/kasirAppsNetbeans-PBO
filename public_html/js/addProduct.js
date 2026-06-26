@@ -101,7 +101,7 @@ function renderProductTable() {
         <div class="col-lg-2 zxproductTableBody">
           <button
             class="btn btn-sm btn-warning"
-            onclick="editProduct('${key.id}')">
+            onclick="alert('Fitur edit belum tersedia di versi static ini.');">
             Edit <i class="bi bi-pencil"></i>
           </button>
 
@@ -274,3 +274,10 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast(`Produk "${nama}" berhasil ditambahkan!`, "success");
   });
 });
+const start = 2025;
+const now = new Date().getFullYear();
+
+const copyEl = document.getElementById("copy");
+if (copyEl) {
+  copyEl.innerHTML = "copyright &copy; " + (start === now ? start : start + " - " + now) + " All rights reserved.";
+}

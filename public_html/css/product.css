@@ -74,7 +74,7 @@
   padding: 1rem;
 }
 
-#product .btnReset {
+#product .btnReset{
   background: var(--zx-red);
   color: var(--text-white);
   border: 2px solid var(--zx-red);
@@ -183,3 +183,26 @@
   overflow-x: hidden;
   padding-right: 5px;
 }
+
+
+
+
+
+
+
+.btnReset {
+  background: var(--zx-red);
+  color: var(--text-white);
+  border: 2px solid var(--zx-red);
+  border-radius: 10px;
+  padding: 0.5rem;
+}
+
+
+
+
+
+
+
+
+
