@@ -126,13 +126,18 @@ function renderProductTable() {
 // ========================================================================
 
 function deleteProduct(id) {
+  if (!confirm("Yakin ingin menghapus produk ini?")) {
+    return;
+  }
+
   let products = loadCustomProducts();
   products = products.filter((p) => p.id !== id);
+
   saveCustomProducts(products);
   renderProductTable();
+
   showToast("Produk berhasil dihapus!", "danger");
 }
-
 // ========================================================================
 // TOAST NOTIFICATION (ringan, tanpa library tambahan)
 // ========================================================================
@@ -150,12 +155,12 @@ function showToast(message, type = "success") {
 
   const toast = document.createElement("div");
   toast.id = "addProductToast";
-  toast.className = `toast align-items-center text-white border-0 show position-fixed bottom-0 end-0 m-4 ${colorMap[type] || "bg-success"}`;
+  toast.className = `toast align-items-center text-white border-0 show position-fixed top-0 end-0 m-4 ${colorMap[type] || "bg-success"}`;
   toast.style.zIndex = "9999";
   toast.setAttribute("role", "alert");
   toast.innerHTML = `
     <div class="d-flex">
-      <div class="toast-body fw-semibold">${message}</div>
+      <div class="toast-body">${message}</div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button>
     </div>`;
 
