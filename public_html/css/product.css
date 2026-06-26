@@ -43,8 +43,12 @@
   --font-iceberg: "Iceberg", cursive;
   --font-walpoet: "Wallpoet", sans-serif;
   --font-twentieth-century: "Twentieth Century", sans-serif;
-  --shadow-first: 6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(255, 255, 255, 0.6);
-  --shadow-second: 6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(255, 255, 255, 0.6), inset 2px 2px 10px rgba(0, 0, 0, 1), inset -1px -1px 5px rgba(255, 255, 255, 0.6);
+  --shadow-first:
+    6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(255, 255, 255, 0.6);
+  --shadow-second:
+    6px 6px 10px rgba(0, 0, 0, 1), 1px 1px 10px rgba(255, 255, 255, 0.6),
+    inset 2px 2px 10px rgba(0, 0, 0, 1),
+    inset -1px -1px 5px rgba(255, 255, 255, 0.6);
   --articel-bg: #cbd5e1;
   --zx-yellow: #eab308;
 }
@@ -172,4 +176,10 @@
 #product .zxproductTableBody .Makanan.ringan {
   background: var(--zx-cyan);
   color: var(--text-white);
+}
+.product-scroll {
+  max-height: 500px; /* tinggi area data */
+  overflow-y: auto; /* scroll vertikal */
+  overflow-x: hidden;
+  padding-right: 5px;
 }

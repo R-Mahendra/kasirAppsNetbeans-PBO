@@ -70,7 +70,7 @@ function renderProductTable() {
   container.innerHTML = products
     .map(
       (key, index) => `
-      <div class="row d-flex justify-content-center align-items-center my-4">
+      <div class="row d-flex justify-content-center align-items-center mb-4">
 
         <div class="col-lg-1 zxproductTableBody">
           ${index + 1}
@@ -101,7 +101,7 @@ function renderProductTable() {
         <div class="col-lg-2 zxproductTableBody">
           <button
             class="btn btn-sm btn-warning"
-            onclick="editProduct('${key.id}')">
+            onclick="alert('Test Butoons Edit Cliked')">
             Edit <i class="bi bi-pencil"></i>
           </button>
 
@@ -256,9 +256,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const products = loadCustomProducts();
 
     // Cek duplikat nama di kategori yang sama
-    const isDuplicate = products.some((p) => p.nama.toLowerCase() === nama.toLowerCase() && p.category === category);
+    const isDuplicate = products.some(
+      (p) =>
+        p.nama.toLowerCase() === nama.toLowerCase() && p.category === category,
+    );
     if (isDuplicate) {
-      showToast(`Produk "${nama}" sudah ada di kategori ${category}!`, "warning");
+      showToast(
+        `Produk "${nama}" sudah ada di kategori ${category}!`,
+        "warning",
+      );
       return;
     }
 
