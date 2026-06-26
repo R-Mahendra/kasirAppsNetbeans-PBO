@@ -1,0 +1,276 @@
+// ========================================================================
+// ADD PRODUCT - KASIR WEB APPS (Static Version)
+// ========================================================================
+// Menyimpan produk baru ke localStorage dengan key "kasir_custom_products".
+// Produk custom ini akan digabung dengan menu.json saat loadMenu() di main.js.
+//
+// Catatan: Karena aplikasi ini static (tanpa backend), produk yang ditambah
+// disimpan di localStorage — bukan ke file menu.json secara langsung.
+// Produk akan tetap ada selama localStorage tidak di-clear.
+//
+// Auth guard: halaman ini hanya bisa diakses kalau sudah login.
+// Butuh js/cookieUtils.js & js/auth.js di-load sebelum file ini.
+// ========================================================================
+
+const CUSTOM_PRODUCTS_KEY = "kasir_custom_products";
+
+// ========================================================================
+// AUTH GUARD
+// ========================================================================
+(function authGuard() {
+  if (!isLoggedIn()) {
+    window.location.href = "login.html";
+  }
+})();
+
+// ========================================================================
+// HELPERS
+// ========================================================================
+
+function generateId() {
+  // Buat ID unik berbasis timestamp + random supaya tidak bentrok dengan
+  // ID produk default di menu.json (yang biasanya integer kecil).
+  return "custom_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+}
+
+function loadCustomProducts() {
+  try {
+    const raw = localStorage.getItem(CUSTOM_PRODUCTS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error("Gagal load custom products:", e);
+    return [];
+  }
+}
+
+function saveCustomProducts(products) {
+  localStorage.setItem(CUSTOM_PRODUCTS_KEY, JSON.stringify(products));
+}
+
+// ========================================================================
+// RENDER TABEL PRODUK YANG SUDAH DITAMBAHKAN
+// ========================================================================
+
+function renderProductTable() {
+  const container = document.getElementById("productContainer");
+  const emptyState = document.getElementById("emptyState");
+
+  if (!container) return;
+
+  const products = loadCustomProducts();
+
+  if (products.length === 0) {
+    container.innerHTML = "";
+    if (emptyState) emptyState.classList.remove("d-none");
+    return;
+  }
+
+  if (emptyState) emptyState.classList.add("d-none");
+
+  container.innerHTML = products
+    .map(
+      (key, index) => `
+      <div class="row d-flex justify-content-center align-items-center my-4">
+
+        <div class="col-lg-1 zxproductTableBody">
+          ${index + 1}
+        </div>
+
+        <div class="col-lg-3 d-flex justify-content-center align-items-center">
+          <img
+            src="${key.img || "/static/default.jpg"}"
+            alt="${key.nama}"
+            class="img-fluid"
+            id="productImage"
+            onerror="this.src='/static/default.jpg'"
+          />
+        </div>
+
+        <div class="col-lg-2 zxproductTableBody">
+          ${key.nama}
+        </div>
+
+        <div class="col-lg-2 zxproductTableBody">
+          Rp ${Number(key.price).toLocaleString("id-ID")}
+        </div>
+
+        <div class="col-lg-2 zxproductTableBody">
+          <span class="badge ${key.category}">${key.category}</span>
+        </div>
+
+        <div class="col-lg-2 zxproductTableBody">
+          <button
+            class="btn btn-sm btn-warning"
+            onclick="editProduct('${key.id}')">
+            Edit <i class="bi bi-pencil"></i>
+          </button>
+
+          <button
+            class="btn btn-sm btn-danger"
+            onclick="deleteProduct('${key.id}')">
+            Delete <i class="bi bi-trash"></i>
+          </button>
+
+
+        </div>
+
+        <hr class="garisHR" />
+      </div>
+    `,
+    )
+    .join("");
+}
+
+// ========================================================================
+// HAPUS PRODUK
+// ========================================================================
+
+function deleteProduct(id) {
+  let products = loadCustomProducts();
+  products = products.filter((p) => p.id !== id);
+  saveCustomProducts(products);
+  renderProductTable();
+  showToast("Produk berhasil dihapus!", "danger");
+}
+
+// ========================================================================
+// TOAST NOTIFICATION (ringan, tanpa library tambahan)
+// ========================================================================
+
+function showToast(message, type = "success") {
+  // Hapus toast sebelumnya kalau masih ada
+  const existing = document.getElementById("addProductToast");
+  if (existing) existing.remove();
+
+  const colorMap = {
+    success: "bg-success",
+    danger: "bg-danger",
+    warning: "bg-warning text-dark",
+  };
+
+  const toast = document.createElement("div");
+  toast.id = "addProductToast";
+  toast.className = `toast align-items-center text-white border-0 show position-fixed bottom-0 end-0 m-4 ${colorMap[type] || "bg-success"}`;
+  toast.style.zIndex = "9999";
+  toast.setAttribute("role", "alert");
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class="toast-body fw-semibold">${message}</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button>
+    </div>`;
+
+  document.body.appendChild(toast);
+
+  setTimeout(() => {
+    if (toast.parentNode) toast.remove();
+  }, 3000);
+}
+
+// ========================================================================
+// PREVIEW GAMBAR SAAT URL DIKETIK
+// ========================================================================
+
+function initImagePreview() {
+  const imgInput = document.getElementById("img");
+  const preview = document.getElementById("imgPreview");
+  const placeholder = document.getElementById("imgPlaceholder");
+  if (!imgInput || !preview) return;
+
+  imgInput.addEventListener("input", () => {
+    const url = imgInput.value.trim();
+    if (url) {
+      preview.src = url;
+      preview.classList.remove("d-none");
+      if (placeholder) placeholder.classList.add("d-none");
+      preview.onerror = () => {
+        preview.src = "/static/default.jpg";
+      };
+    } else {
+      preview.classList.add("d-none");
+      if (placeholder) placeholder.classList.remove("d-none");
+    }
+  });
+}
+
+// ========================================================================
+// VALIDASI FORM
+// ========================================================================
+
+function validateForm(nama, price, category) {
+  if (!nama || nama.trim() === "") {
+    showToast("Nama produk tidak boleh kosong!", "warning");
+    return false;
+  }
+  if (nama.trim().length < 2) {
+    showToast("Nama produk minimal 2 karakter!", "warning");
+    return false;
+  }
+  if (!price || isNaN(price) || Number(price) <= 0) {
+    showToast("Harga harus berupa angka lebih dari 0!", "warning");
+    return false;
+  }
+  if (!category) {
+    showToast("Pilih kategori terlebih dahulu!", "warning");
+    return false;
+  }
+  return true;
+}
+
+// ========================================================================
+// SUBMIT FORM — TAMBAH PRODUK BARU
+// ========================================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+  initImagePreview();
+  renderProductTable();
+
+  const form = document.getElementById("addProductForm");
+  if (!form) return;
+
+  // Reset preview saat form di-reset
+  form.addEventListener("reset", () => {
+    const preview = document.getElementById("imgPreview");
+    const placeholder = document.getElementById("imgPlaceholder");
+    if (preview) preview.classList.add("d-none");
+    if (placeholder) placeholder.classList.remove("d-none");
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const nama = document.getElementById("nama").value.trim();
+    const price = document.getElementById("price").value;
+    const img = document.getElementById("img").value.trim();
+    const category = document.getElementById("category").value;
+
+    if (!validateForm(nama, price, category)) return;
+
+    const newProduct = {
+      id: generateId(),
+      nama,
+      price: Number(price),
+      img: img || "/static/default.jpg",
+      category,
+    };
+
+    const products = loadCustomProducts();
+
+    // Cek duplikat nama di kategori yang sama
+    const isDuplicate = products.some((p) => p.nama.toLowerCase() === nama.toLowerCase() && p.category === category);
+    if (isDuplicate) {
+      showToast(`Produk "${nama}" sudah ada di kategori ${category}!`, "warning");
+      return;
+    }
+
+    products.push(newProduct);
+    saveCustomProducts(products);
+
+    // Reset form
+    form.reset();
+    const preview = document.getElementById("imgPreview");
+    if (preview) preview.classList.add("d-none");
+
+    renderProductTable();
+    showToast(`Produk "${nama}" berhasil ditambahkan!`, "success");
+  });
+});

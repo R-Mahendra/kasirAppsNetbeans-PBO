@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Reza Mahendra - Zhaenx" />
+    <meta name="description" content="kasir Apps - Static HTML/JS" />
+    <meta name="og::description" content="kasir Apps - Static HTML/JS" />
+    <meta name="referrer" content="origin" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" itemprop="image" content="" />
+    <meta property="og:site_name" content="Zhaenx" />
+    <link rel="icon" type="image/x-icon" href="/static/img/icons/favicon.ico" />
+    <link rel="icon" href="/static/img/icons/logo.png" sizes="" type="image/png" />
+    <link rel="apple-touch-icon" href="/static/img/icons/logo.png" sizes="any" type="image/png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/static/img/icons/logo.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/static/img/icons/logo.png" />
+    <title>Kasir Web Apps - Kelompok V</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/login.css" />
+  </head>
+  <body>
+    <div class="parentMobileAlert d-none" id="parentMobileAlert">
+      <div id="mobileAlert" class="d-none">
+        <div class="alertBox">
+          <h5 class="mb-2">Noted.</h5>
+          <h5 class="m-0">ini hanya untuk desktop! Terima Kasih.</h5>
+        </div>
+      </div>
+    </div>
+    <section class="zx__Login" id="zx__Login">
+      <!-- Alert error login (ditampilkan/disembunyikan via JS, bukan Jinja) -->
+      <div class="alertlogin d-flex justify-content-center align-items-center d-none" id="alertlogin" role="alert">
+        <div id="alertBox" class="alertBox">
+          <div class="textalert text-center">
+            <h5><i class="bi bi-exclamation-square-fill fs-4"></i> Invalid Credentials</h5>
+            <h5 id="loginErrorText"></h5>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="row d-flex align-items-center justify-content-center">
+          <div class="zx__container" id="zx__container">
+            <div class="zx__animasiFirst" id="zx__animasiFirst"></div>
+            <div class="zx__animasiSecond" id="zx__animasiSecond"></div>
+            <div class="zx__ParentLogin">
+              <div class="zx__LoginLeft">
+                <h2 class="zx__animation" style="--animasi_INS: 0; --animasi_EXS: 20">MASUK</h2>
+                <div class="zx__BoxFormLogin">
+                  <form id="loginForm">
+                    <div class="zx__animation position-relative BoxInput" style="--animasi_INS: 1; --animasi_EXS: 21">
+                      <input type="email" class="form-control zx__input" autocomplete="email" name="email" id="email" aria-describedby="emailHelp" required />
+                      <label for="email" class="form-label zx__label">Email</label>
+                    </div>
+                    <div class="zx__animation position-relative BoxInput" style="--animasi_INS: 2; --animasi_EXS: 23">
+                      <input type="password" class="form-control zx__input" autocomplete="password" name="password" id="password" required />
+                      <label for="password" class="form-label zx__label">Password</label>
+                    </div>
+                    <div class="zx__animation ForgotPW d-flex justify-content-between position-relative py-2" style="--animasi_INS: 3; --animasi_EXS: 24">
+                      <a href="#" class="Link-ForgotPW">Lupa Password!</a>
+                      <div class="form-check">
+                        <input type="checkbox" class="form-check-input me-1" id="SavePasswordCheck" /><label class="form-check-label" for="SavePasswordCheck">Save Password</label>
+                      </div>
+                    </div>
+                    <div class="zx__animation zx__SubmitLogin justify-content-center d-flex my-4" style="--animasi_INS: 4; --animasi_EXS: 25">
+                      <button class="btn zx__ButtonFirst" id="zx__SubmitLogin" type="submit">LOGIN</button>
+                    </div>
+                    <h6 class="zx__animation text-center my-2" style="--animasi_INS: 5; --animasi_EXS: 26">
+                      Sudah punya akun Belom. . .? Kalo belom punya buat akun dulu<a class="LinkToRegis ms-1 btn" id="LinkToRegis">Disini!</a>
+                    </h6>
+                  </form>
+                </div>
+              </div>
+              <div class="zx__LoginRight">
+                <h2 class="zx__animation" style="--animasi_INS: 0; --animasi_EXS: 20">
+                  WELCOME BACK. . . !
+                  <p>#ENJOY WITH ME..! #ZHAENX404</p>
+                </h2>
+                <div class="zx__RandomQuotes zx__animation" style="--animasi_INS: 1; --animasi_EXS: 21">
+                  <p id="quoteText" class="quoteText"></p>
+                </div>
+                <div class="zx_LoginWith">
+                  <button class="btn zx__animation mb-3 zx__LoginWith" id="zx__LoginWithGoogle" style="--animasi_INS: 2; --animasi_EXS: 22">
+                    <img src="/static/img/icons/google.png" alt="icons" width="25" />
+                    Continue with Google</button
+                  ><button class="btn zx__animation zx__LoginWith" id="zx__LoginWithFB" style="--animasi_INS: 3; --animasi_EXS: 24">
+                    <img src="/static/img/icons/facebook.png" alt="icons" width="25" />
+                    Continue with FACEBOOK
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="zx__ParentSignUp">
+              <div class="zx__SignUPLeft">
+                <h2 class="zx__animation" style="--animasi_INS: 17; --animasi_EXS: 1">
+                  HAVE A NICE DAY. . !
+                  <p>#ENJOY WITH ME.! #ZHAENX404</p>
+                </h2>
+                <div class="zx__RandomQuotes zx__animation" style="--animasi_INS: 18; --animasi_EXS: 2">
+                  <p id="quoteText" class="quoteText"></p>
+                </div>
+                <div class="zx_SignUWith">
+                  <button class="btn zx__animation mb-3 zx__LoginWith" id="zx__LoginWithGoogle2" style="--animasi_INS: 19; --animasi_EXS: 3">
+                    <img src="/static/img/icons/google.png" alt="icons" width="25" />
+                    Continue with Google</button
+                  ><button class="btn zx__animation zx__LoginWith" id="zx__LoginWithFB2" style="--animasi_INS: 20; --animasi_EXS: 4">
+                    <img src="/static/img/icons/facebook.png" alt="icons" width="25" />
+                    Continue with FACEBOOK
+                  </button>
+                </div>
+              </div>
+              <div class="zx__SignUPRight">
+                <h2 class="zx__animation ps-3" style="--animasi_INS: 16; --animasi_EXS: 0">DAFTAR</h2>
+                <div class="zx__BoxFormSignUP">
+                  <form id="signupForm">
+                    <div class="zx__animation position-relative BoxInput" style="--animasi_INS: 17; --animasi_EXS: 1">
+                      <input type="text" class="form-control zx__input" id="InputNama" required value="" /><label for="InputNama" class="form-label zx__label">Nama Lengkap</label>
+                    </div>
+                    <div class="zx__animation position-relative BoxInput" style="--animasi_INS: 18; --animasi_EXS: 2">
+                      <input type="email" class="form-control zx__input" autocomplete="email" id="InputEmail" aria-describedby="emailHelp" required value="" /><label
+                        for="InputEmail"
+                        class="form-label zx__label"
+                        >Email</label
+                      >
+                    </div>
+                    <div class="zx__animation position-relative BoxInput" style="--animasi_INS: 19; --animasi_EXS: 3">
+                      <input type="password" class="form-control zx__input" autocomplete="password" id="InputPassword" required value="" /><label for="InputPassword" class="form-label zx__label"
+                        >Password</label
+                      >
+                    </div>
+                    <div class="zx__animation Alamat-NoHP d-flex justify-content-between position-relative" style="--animasi_INS: 20; --animasi_EXS: 4">
+                      <div class="zx__animation position-relative BoxInput pe-1 mb-2">
+                        <input type="text" class="form-control zx__input" id="InputAlamat" required value="" /><label for="InputAlamat" class="form-label zx__label">Alamat Rumah</label>
+                      </div>
+                      <div class="zx__animation position-relative BoxInput ps-1 mb-2">
+                        <input type="tel" class="form-control zx__input" id="InputNoHp" required value="" /><label for="InputNoHp" class="form-label zx__label">No.Handphone</label>
+                      </div>
+                    </div>
+                    <div class="zx__animation position-relative BoxInput my-1" style="--animasi_INS: 21; --animasi_EXS: 5">
+                      <input class="form-control form-control-sm" id="formFile" type="file" required accept=".jpg,.jpeg,.png" />
+                    </div>
+                    <div class="zx__animation zx__SubmitSingUp justify-content-center d-flex my-3" style="--animasi_INS: 22; --animasi_EXS: 6">
+                      <button class="btn zx__ButtonFirst" id="zx__SubmitSingUp" type="submit">SIGN-UP</button>
+                    </div>
+                    <h6 class="zx__animation text-center my-2" style="--animasi_INS: 23; --animasi_EXS: 7">
+                      Sudah punya akun Belom. . .? Kalo udah punya langsung login<a class="LinkToLogin ms-1 btn" id="LinkToLogin">Disini!</a>
+                    </h6>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ContainerAlertSingup d-none" id="ContainerAlertSingup">
+        <div class="card text-center AlertBoxSingup">
+          <div class="content-Text">
+            <h5>Warning.!</h5>
+            <p><i class="bi bi-person-fill-lock"></i> Pendaftaran Masih digembok</p>
+          </div>
+          <div class="boxbtn">
+            <button type="button" class="btn btnAlertconfirm" id="btnAlertconfirm">confirm</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/cookieUtils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/loginStyle.js"></script>
+  </body>
+</html>
