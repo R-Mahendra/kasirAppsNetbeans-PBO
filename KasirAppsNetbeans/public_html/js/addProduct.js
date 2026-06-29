@@ -111,16 +111,12 @@ function renderProductTable() {
             onclick="openEditModal('${key.id}')">
             Edit <i class="bi bi-pencil"></i>
           </button>
-
           <button
             class="btn btn-sm btn-danger"
             onclick="openDeleteModal('${key.id}')">
             Delete <i class="bi bi-trash"></i>
           </button>
-
-
         </div>
-
         <hr class="garisHR" />
       </div>
     `,

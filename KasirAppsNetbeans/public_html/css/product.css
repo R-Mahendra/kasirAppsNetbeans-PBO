@@ -77,7 +77,7 @@
 #editProductModal .btnReset {
   background: var(--zx-red);
   color: var(--text-white);
-  border: 2px solid var(--zx-red);
+  border: 2px solid var(--zx-yellow);
   border-radius: 10px;
   padding: 0.5rem;
 }
@@ -95,7 +95,7 @@
 #product .btnSubmit {
   background: var(--zx-violet);
   color: var(--text-white);
-  border: 2px solid var(--zx-violet);
+  border: 2px solid var(--zx-yellow);
   border-radius: 10px;
   padding: 0.5rem;
 }
@@ -212,4 +212,18 @@
   box-shadow: var(--shadow-first);
   border-radius: 1rem;
   padding: 1rem;
+}
+
+#zxNavlist .zximgAdmin {
+  width: 50%;
+  height: 50%;
+  border-radius: 50%;
+  border: 1px solid var(--zx-yellow);
+}
+
+#zxNavlist a {
+  color: var(--text-steal);
+  font-weight: 500;
+  margin-left: 0.5rem;
+  text-decoration: none;
 }

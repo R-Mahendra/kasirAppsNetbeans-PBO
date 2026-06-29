@@ -47,6 +47,30 @@
       "price": 50000,
       "id": "Mkn008",
       "img": "https://i.ibb.co.com/67mDNfwM/MK008.jpg"
+    },
+    {
+      "nama": "cheesecake",
+      "price": 23000,
+      "id": "Mkn009",
+      "img": "https://i.ibb.co.com/B50kfqc8/mkn-001.webp"
+    },
+    {
+      "nama": "Pancake",
+      "price": 25000,
+      "id": "Mkn002",
+      "img": "https://i.ibb.co.com/LDmB1mBk/Mkn-002.webp"
+    },
+    {
+      "nama": "croissant",
+      "price": 25000,
+      "id": "Mkn003",
+      "img": "https://i.ibb.co.com/WWtfzGsQ/Mkn-003.jpg"
+    },
+    {
+      "nama": "Puding Caramel",
+      "price": 30000,
+      "id": "Mkn004",
+      "img": "https://i.ibb.co.com/1YTBCMBM/MK004.jpg"
     }
   ],
   "Minuman": [
@@ -97,6 +121,29 @@
       "price": 20000,
       "id": "Mn008",
       "img": "https://i.ibb.co.com/V0smLZYb/MN008.jpg"
+    },{
+      "nama": "Butterscotch",
+      "price": 30000,
+      "id": "Mn004",
+      "img": "https://i.ibb.co.com/j9v5MpSY/Mn-003.jpg"
+    },
+    {
+      "nama": "Lemon Tea",
+      "price": 35000,
+      "id": "Mn005",
+      "img": "https://i.ibb.co.com/mCPGvGMj/Mn-004.jpg"
+    },
+    {
+      "nama": "Lychee Tea",
+      "price": 38000,
+      "id": "Mn006",
+      "img": "https://i.ibb.co.com/NdqwDsmh/Mn-005.webp"
+    },
+    {
+      "nama": "Splash tea",
+      "price": 23000,
+      "id": "Mn007",
+      "img": "https://i.ibb.co.com/Lz3S227n/MN007.jpg"
     }
   ],
   "Makanan ringan": [
