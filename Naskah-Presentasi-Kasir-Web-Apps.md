@@ -1,0 +1,396 @@
+# Naskah Presentasi — Kasir Web Apps (Kelompok 5)
+
+Catatan pemakaian: naskah ini disusun mengikuti urutan 13 slide pada file
+`Kasir-Web-Apps-Presentasi.pptx`. Bagian **[JEDA]** menandakan tempat yang pas
+untuk berhenti sebentar atau menunjuk ke slide. Bagian **[DEMO]** menandakan
+saat yang pas untuk berpindah ke aplikasi asli kalau presentasi disertai demo
+langsung.
+
+---
+
+## Slide 1 — Pembuka
+
+Selamat pagi/siang, perkenalkan kami dari Kelompok 5.
+
+Hari ini kami akan mempresentasikan proyek kami yang berjudul **Kasir Web
+Apps** — sebuah aplikasi kasir berbasis web yang dibangun murni dengan HTML,
+CSS, dan JavaScript vanilla, tanpa backend server.
+
+Yang menarik dari proyek ini, seluruh logika yang biasanya berjalan di server
+— seperti autentikasi, penyimpanan keranjang belanja, sampai pencetakan struk
+— semuanya kami pindahkan untuk berjalan langsung di browser, menggunakan
+`localStorage` sebagai pengganti database dan session.
+
+**[JEDA]** Saya Reza Mahendra, mewakili Kelompok 5 dalam sesi presentasi ini.
+
+---
+
+## Slide 2 — Agenda
+
+Berikut agenda presentasi kami hari ini. Kami akan membahas enam poin utama:
+
+1. Gambaran umum project — latar belakang dan tujuan aplikasi.
+2. Arsitektur dan struktur kode — bagaimana file-file kami terorganisir.
+3. Logika autentikasi — bagaimana sistem login bekerja tanpa server.
+4. Logika transaksi — dari keranjang belanja sampai cetak struk.
+5. Contoh penulisan kode program — beberapa potongan kode penting.
+6. Dan terakhir, demo tampilan output serta kesimpulan.
+
+Mari kita mulai dari yang pertama.
+
+---
+
+## Slide 3 — Gambaran Umum Project
+
+Jadi, apa sebenarnya Kasir Web Apps ini?
+
+Aplikasi ini pada dasarnya adalah sistem kasir untuk restoran, yang berfungsi
+mengelola menu, keranjang belanja, dan transaksi pembayaran pelanggan.
+
+Awalnya, aplikasi ini kami bangun menggunakan **Python Flask** sebagai
+backend, **Jinja2** untuk templating, dan **reportlab** untuk mencetak struk
+PDF di sisi server.
+
+Namun, karena kebutuhan deployment yang lebih ringan dan ingin aplikasi bisa
+dijalankan tanpa hosting backend sama sekali, kami melakukan konversi total
+menjadi **static HTML dan vanilla JavaScript**.
+
+**[JEDA — tunjuk ke tabel pergantian teknologi]**
+
+Beberapa pergantian kunci yang kami lakukan:
+
+- Backend server Flask kami hilangkan total, semua logic kini berjalan di
+  client.
+- Session login yang dulu dikelola Flask, sekarang digantikan kombinasi
+  `localStorage` dan cookie.
+- Cetak struk yang dulu memakai reportlab di server, sekarang memakai
+  **jsPDF** yang berjalan langsung di browser.
+- Data menu yang dulu diambil dari database lewat route Flask, sekarang
+  cukup di-`fetch()` dari file `menu.json` statis.
+
+Pendekatan ini membuat aplikasi sangat ringan dan bisa dijalankan di mana
+saja — bahkan tanpa server sama sekali, cukup file statis.
+
+---
+
+## Slide 4 — Arsitektur & Struktur File
+
+Untuk menjaga kode tetap rapi dan mudah dipelihara, kami memecah logika
+JavaScript menjadi beberapa modul kecil yang masing-masing punya tanggung
+jawab spesifik:
+
+- **`cookieUtils.js`** — berisi fungsi-fungsi dasar untuk mengatur cookie:
+  `setCookie`, `getCookie`, dan `deleteCookie`. File ini **wajib dimuat
+  paling pertama**, karena file-file lain bergantung padanya.
+- **`auth.js`** — mengelola status login aplikasi, lewat fungsi
+  `isLoggedIn()`, `setLoggedIn()`, dan `clearLoggedIn()`.
+- **`loginStyle.js`** — khusus menangani logika halaman login: validasi
+  form, dan animasi transisi panel login ke signup.
+- **`main.js`** — ini adalah otak dari aplikasi kasir. Berisi logika menu,
+  keranjang belanja, kalkulasi total pembayaran, sampai pencetakan struk
+  PDF.
+- **`addProduct.js`** — menangani fitur CRUD produk custom oleh admin,
+  semuanya tersimpan di `localStorage`.
+- **`menu.json`** — sumber data menu default kami, dikelompokkan per
+  kategori: Makanan, Minuman, dan Makanan Ringan.
+
+Pemisahan modul seperti ini membuat setiap file punya satu tanggung jawab
+yang jelas, dan memudahkan kami saat debugging maupun pengembangan fitur baru.
+
+---
+
+## Slide 5 — Logika Program: Alur Autentikasi
+
+Sekarang kita masuk ke bagian logika program, dimulai dari alur autentikasi.
+
+**[JEDA — ikuti diagram di slide]**
+
+Ketika user membuka halaman `login.html`, sistem pertama-tama mengecek lewat
+fungsi `isLoggedIn()` — apakah user ini sudah pernah login sebelumnya. Kalau
+sudah, dia langsung diarahkan ke `index.html` tanpa perlu login ulang.
+
+Kalau belum, user akan mengisi form email dan password. Sistem akan
+mencocokkan input tersebut dengan kredensial yang sudah ditentukan di dalam
+kode.
+
+- Jika **valid**, fungsi `setLoggedIn(email)` dipanggil. Fungsi ini menyimpan
+  status login ke dua tempat sekaligus: `localStorage` dan cookie. Setelah
+  itu, user diarahkan ke `index.html`.
+- Jika **tidak valid**, sistem menampilkan pesan error lewat
+  `showLoginError()`, dan user tetap berada di halaman login.
+
+Yang membuat sistem ini cukup aman secara fungsional adalah adanya
+**Auth Guard** di setiap halaman yang butuh login — seperti `index.html` dan
+`addproduct.html`. Begitu file JavaScript halaman tersebut dimuat, fungsi
+`authGuard()` otomatis berjalan dan mengecek status login. Kalau ternyata
+belum login — misalnya karena user mengetik URL langsung — dia langsung
+di-redirect balik ke halaman login.
+
+---
+
+## Slide 6 — Penulisan Kode: Auth Guard & Cookie Utilities
+
+Mari kita lihat lebih dekat penulisan kodenya.
+
+**[JEDA — tunjuk code block kiri atas]**
+
+Ini adalah fungsi `setCookie` di file `cookieUtils.js`. Fungsi ini menerima
+nama cookie, value, dan jumlah hari sebelum cookie expired, lalu menuliskannya
+ke `document.cookie` dengan format standar.
+
+**[JEDA — tunjuk code block kiri bawah]**
+
+Selanjutnya, fungsi `isLoggedIn()` di `auth.js`. Perhatikan bahwa fungsi ini
+melakukan **validasi ganda** — mengecek `localStorage` **dan** cookie
+sekaligus dengan operator `&&`. Ini sengaja dilakukan agar konsisten: jika
+salah satu saja terhapus secara manual (misalnya lewat DevTools), status
+login akan otomatis dianggap tidak valid.
+
+**[JEDA — tunjuk code block kanan atas]**
+
+Ini contoh Auth Guard yang dipasang di `main.js` dan `addProduct.js`. Ditulis
+sebagai **IIFE** — *Immediately Invoked Function Expression* — yaitu fungsi
+yang langsung dieksekusi begitu file dimuat, tanpa perlu dipanggil secara
+manual. Jadi proteksi ini otomatis aktif di setiap halaman yang memuat
+script tersebut.
+
+---
+
+## Slide 7 — Logika Program: Alur Proses Dari Project Yang Dibuat
+
+Slide ini merangkum **alur logika utuh** dari project kami, dari awal sampai
+akhir — total enam langkah:
+
+1. **Login** — validasi kredensial dan menyimpan sesi.
+2. **Load Menu** — sistem memanggil `fetch()` untuk mengambil `menu.json`,
+   lalu menggabungkannya dengan produk custom yang tersimpan di
+   `localStorage` lewat fungsi `mergeCustomProducts()`.
+3. **Tambah ke Cart** — saat user klik tombol "Add to cart", item langsung
+   disimpan ke `localStorage`.
+4. **Atur Qty** — tombol plus dan minus mengubah jumlah item beserta
+   subtotalnya secara real-time.
+5. **Proses Bayar** — sistem otomatis menghitung diskon, PPN 10 persen,
+   total, dan kembalian.
+6. **Cetak Struk** — struk dicetak dalam bentuk PDF format thermal 90mm
+   menggunakan library jsPDF, langsung dari browser, tanpa request apa pun
+   ke server.
+
+Inilah inti dari bagaimana proyek kami bekerja secara keseluruhan — semuanya
+berjalan di sisi client, tanpa satu pun panggilan ke backend.
+
+---
+
+## Slide 8 — Penulisan Kode: Logika Keranjang (Cart)
+
+Sekarang masuk ke salah satu fungsi paling penting: `updateCart(action, id)`.
+
+**[JEDA — tunjuk code block]**
+
+Fungsi ini menangani semua aksi pada keranjang — menambah, mengurangi, atau
+menghapus item.
+
+- Cart kami simpan sebagai sebuah **object**, dengan **key** berupa ID
+  produk. Ini membuat pencarian item jadi sangat cepat, karena tidak perlu
+  melakukan looping setiap kali mengecek apakah item sudah ada di keranjang.
+- Saat aksi `"add"` dipanggil dan item belum ada, sistem mencari data produk
+  lewat `findMenuItem(id)`, lalu membuat entry baru dengan quantity 1.
+- Kalau item sudah ada, quantity-nya cukup ditambah dan subtotal dihitung
+  ulang.
+- Untuk aksi `"minus"`, jika quantity sampai mencapai nol atau kurang, item
+  tersebut otomatis dihapus dari cart dengan `delete cart[id]`.
+- Di akhir fungsi, `saveCartToStorage()` dipanggil untuk menyimpan perubahan
+  ke `localStorage`, dan `refreshCartUI()` untuk merender ulang tampilan
+  serta badge jumlah item di ikon keranjang.
+
+---
+
+## Slide 9 — Penulisan Kode: Kalkulasi Diskon, PPN & Total
+
+Selanjutnya, bagian perhitungan finansial — ini krusial karena berkaitan
+langsung dengan akurasi nominal yang dibayar pelanggan.
+
+**[JEDA — tunjuk code block kiri atas]**
+
+Fungsi `hitungTotal(subtotal)` melakukan langkah-langkah berikut:
+
+1. Menghitung **diskon** sebesar 10 persen dari subtotal.
+2. Menghitung **DPP** (Dasar Pengenaan Pajak), yaitu subtotal dikurangi
+   diskon.
+3. Menghitung **PPN** sebesar 10 persen dari DPP tersebut.
+4. Menjumlahkan DPP dan PPN untuk mendapatkan **total** akhir.
+
+**[JEDA — tunjuk panel simulasi di kanan]**
+
+Sebagai contoh konkret: jika subtotal belanja adalah Rp 100.000, setelah
+dipotong diskon 10 persen menjadi Rp 90.000 sebagai DPP, lalu ditambah PPN 10
+persen dari DPP tersebut sebesar Rp 9.000, maka totalnya menjadi **Rp
+99.000**. Jika pelanggan membayar Rp 100.000, kembaliannya adalah Rp 1.000.
+
+**[JEDA — tunjuk code block kiri bawah]**
+
+Sebelum transaksi benar-benar diproses, sistem juga memvalidasi apakah uang
+yang dibayarkan cukup. Jika `cash` lebih kecil dari `total`, sistem
+menampilkan peringatan dan proses dihentikan — mencegah transaksi dengan
+nominal pembayaran yang tidak valid.
+
+---
+
+## Slide 10 — Penulisan Kode: CRUD Produk Custom (Admin Dashboard)
+
+Halaman admin kami memungkinkan penambahan, pengeditan, dan penghapusan
+produk **tanpa backend sama sekali** — semuanya tersimpan di `localStorage`
+dengan key `kasir_custom_products`.
+
+**[JEDA — tunjuk code block kiri atas]**
+
+Saat admin menambahkan produk baru, objek `newProduct` dibuat dengan ID unik,
+nama, harga, gambar (atau gambar default jika kosong), dan kategori. Produk
+ini kemudian ditambahkan ke array yang sudah ada, dan disimpan kembali lewat
+`saveCustomProducts()`.
+
+**[JEDA — tunjuk code block kiri bawah]**
+
+ID unik ini dihasilkan oleh fungsi `generateId()`, yang mengombinasikan
+**timestamp** (`Date.now()`) dan angka random. Ini sengaja dilakukan supaya
+ID produk custom tidak bentrok dengan ID produk default di `menu.json`, yang
+biasanya berupa kode singkat seperti `Mkn001`.
+
+**[JEDA — tunjuk tiga kartu CRUD di kanan]**
+
+Secara keseluruhan, fitur admin ini mendukung:
+
+- **Create** — form tambah produk dengan preview gambar secara real-time.
+- **Update** — modal edit yang otomatis mengisi ulang field berdasarkan data
+  produk yang dipilih.
+- **Delete** — modal konfirmasi terlebih dahulu sebelum produk benar-benar
+  dihapus secara permanen.
+
+Produk-produk custom ini nantinya digabung otomatis dengan `menu.json` saat
+halaman utama memuat menu.
+
+---
+
+## Slide 11 — Studi Kasus: Debugging Infinite Redirect Loop
+
+Sekarang kami ingin membagikan salah satu **bug paling menantang** yang kami
+temui selama pengembangan: *infinite redirect loop* antara `login.html` dan
+`index.html`.
+
+**[JEDA — tunjuk panel "Masalah"]**
+
+Gejalanya, browser terus-menerus berpindah antara dua halaman tanpa henti —
+seperti terjebak dalam lingkaran. Setelah ditelusuri, ternyata masalahnya ada
+pada **urutan pemuatan script** di file HTML. File `auth.js` saat itu sempat
+dimuat **sebelum** `cookieUtils.js`.
+
+Akibatnya, ketika fungsi `isLoggedIn()` di `auth.js` dipanggil dan mencoba
+menggunakan `getCookie()`, fungsi tersebut **belum terdefinisi** — karena
+filenya belum dimuat. Ini membuat status login selalu terbaca salah, yang
+pada akhirnya memicu redirect berulang-ulang tanpa henti.
+
+**[JEDA — tunjuk panel "Solusi"]**
+
+Solusi yang kami terapkan ada dua bagian:
+
+1. Kami memisahkan fungsi-fungsi cookie murni ke file `cookieUtils.js`
+   tersendiri, terpisah dari logika status login.
+2. Kami menegakkan urutan pemuatan script secara konsisten di **semua**
+   halaman HTML: `cookieUtils.js` dimuat dulu, baru `auth.js`, baru file
+   logika spesifik halaman seperti `loginStyle.js`, `main.js`, atau
+   `addProduct.js`.
+
+Setelah perbaikan ini, fungsi `isLoggedIn()` selalu mengembalikan hasil yang
+konsisten, dan masalah redirect loop tersebut hilang total.
+
+Bug ini mengajarkan kami pentingnya memperhatikan **dependency order** dalam
+JavaScript vanilla — sesuatu yang biasanya ditangani otomatis oleh module
+bundler, tapi di static HTML, urutan `<script>` tag sangat menentukan.
+
+---
+
+## Slide 12 — Output Program
+
+Sekarang kita masuk ke bagian tampilan output dari aplikasi yang sudah
+berjalan.
+
+**[DEMO — jika memungkinkan, beralih ke aplikasi langsung di browser]**
+
+Secara ringkas, berikut tampilan-tampilan utama aplikasi kami:
+
+- **Halaman Login** — form login lengkap dengan validasi dan animasi
+  transisi panel login ke signup.
+- **Halaman Menu (`index.html`)** — daftar menu yang dikelompokkan per
+  kategori, masing-masing dengan tombol "Add to cart".
+- **Offcanvas Keranjang** — panel keranjang belanja, lengkap dengan form
+  data pembeli (nama, nomor meja, nomor antrian) dan rincian diskon, PPN,
+  serta total.
+- **Struk PDF** — struk pembayaran dalam format thermal 90mm yang otomatis
+  terunduh setelah transaksi diproses.
+- **Admin: Tambah Produk** — form untuk menambahkan produk baru beserta
+  preview gambar.
+- **Admin: Tabel Produk** — daftar produk custom yang sudah ditambahkan,
+  dengan opsi Edit dan Delete.
+
+**[JEDA]** Kalau memungkinkan, di sinilah bagian yang pas untuk
+mendemokan aplikasi secara langsung — mulai dari login, menambah item ke
+keranjang, memproses pembayaran, sampai mengunduh struk PDF-nya.
+
+---
+
+## Slide 13 — Kesimpulan & Penutup
+
+Sebagai penutup, izinkan kami merangkum beberapa poin penting dari proyek
+**Kasir Web Apps** ini:
+
+1. **Tanpa backend, tetap fungsional** — seluruh logika transaksi dan
+   autentikasi berjalan penuh di sisi client, tanpa satu pun server yang
+   diperlukan.
+2. **Data persisten via `localStorage`** — cart, status login, dan produk
+   custom tetap tersimpan selama browser tidak dibersihkan datanya.
+3. **Auth guard konsisten** — pengecekan ganda `localStorage` dan cookie di
+   setiap halaman yang dilindungi, memastikan tidak ada celah akses tanpa
+   login.
+4. **Struk PDF native di browser** — jsPDF berhasil menggantikan reportlab
+   tanpa kehilangan fungsi cetak struk sama sekali.
+
+Proyek ini membuktikan bahwa aplikasi kasir yang fungsional dan siap demo
+bisa dibangun hanya dengan HTML, CSS, dan JavaScript vanilla — tanpa
+ketergantungan pada server backend sama sekali.
+
+Demikian presentasi dari kami, Kelompok 5. Kami ucapkan terima kasih atas
+perhatian dan waktunya. Kami persilakan jika ada pertanyaan, kritik, atau
+saran terkait proyek ini.
+
+**[SESI TANYA JAWAB]**
+
+---
+
+## Lampiran — Antisipasi Pertanyaan Umum
+
+Beberapa pertanyaan yang mungkin muncul saat sesi tanya jawab, beserta poin
+jawaban singkat:
+
+**Q: Apakah aman menyimpan kredensial login langsung di JavaScript seperti
+ini?**
+A: Tidak, dan kami sadar betul soal ini. Pendekatan ini hanya cocok untuk
+demo, prototipe, atau kebutuhan internal/lokal — bukan untuk data produksi
+nyata. Siapa pun yang membuka DevTools bisa melihat kredensial atau bahkan
+mengubah status login secara manual. Untuk produksi sungguhan, autentikasi
+semacam ini wajib dipindahkan ke server dengan hashing password dan token
+sesi yang tidak bisa dimanipulasi dari client.
+
+**Q: Bagaimana jika localStorage di-clear oleh user?**
+A: Semua data — cart, status login, dan produk custom — akan hilang, karena
+tidak ada cadangan di server. Ini adalah trade-off yang kami terima demi
+kesederhanaan arsitektur static.
+
+**Q: Mengapa tidak pakai sessionStorage saja dibanding localStorage +
+cookie?**
+A: Kami memilih localStorage agar data (terutama cart) tetap ada walau tab
+browser ditutup dan dibuka kembali. Cookie ditambahkan sebagai lapisan
+validasi kedua untuk status login.
+
+**Q: Bagaimana skalabilitas pendekatan ini untuk banyak pengguna sekaligus?**
+A: Karena tidak ada server maupun database terpusat, pendekatan ini cocok
+untuk single-user per device — bukan multi-user real-time. Untuk skala
+produksi, data perlu dipindahkan ke backend dan database sungguhan.
