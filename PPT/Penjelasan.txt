@@ -1,13 +1,3 @@
-# Naskah Presentasi — Kasir Web Apps (Kelompok 5)
-
-Catatan pemakaian: naskah ini disusun mengikuti urutan 13 slide pada file
-`Kasir-Web-Apps-Presentasi.pptx`. Bagian **[JEDA]** menandakan tempat yang pas
-untuk berhenti sebentar atau menunjuk ke slide. Bagian **[DEMO]** menandakan
-saat yang pas untuk berpindah ke aplikasi asli kalau presentasi disertai demo
-langsung.
-
----
-
 ## Slide 1 — Pembuka
 
 Selamat pagi/siang, perkenalkan kami dari Kelompok 5.
@@ -322,37 +312,3 @@ ketergantungan pada server backend sama sekali.
 Demikian presentasi dari kami, Kelompok 5. Kami ucapkan terima kasih atas
 perhatian dan waktunya. Kami persilakan jika ada pertanyaan, kritik, atau
 saran terkait proyek ini.
-
-**[SESI TANYA JAWAB]**
-
----
-
-## Lampiran — Antisipasi Pertanyaan Umum
-
-Beberapa pertanyaan yang mungkin muncul saat sesi tanya jawab, beserta poin
-jawaban singkat:
-
-**Q: Apakah aman menyimpan kredensial login langsung di JavaScript seperti
-ini?**
-A: Tidak, dan kami sadar betul soal ini. Pendekatan ini hanya cocok untuk
-demo, prototipe, atau kebutuhan internal/lokal — bukan untuk data produksi
-nyata. Siapa pun yang membuka DevTools bisa melihat kredensial atau bahkan
-mengubah status login secara manual. Untuk produksi sungguhan, autentikasi
-semacam ini wajib dipindahkan ke server dengan hashing password dan token
-sesi yang tidak bisa dimanipulasi dari client.
-
-**Q: Bagaimana jika localStorage di-clear oleh user?**
-A: Semua data — cart, status login, dan produk custom — akan hilang, karena
-tidak ada cadangan di server. Ini adalah trade-off yang kami terima demi
-kesederhanaan arsitektur static.
-
-**Q: Mengapa tidak pakai sessionStorage saja dibanding localStorage +
-cookie?**
-A: Kami memilih localStorage agar data (terutama cart) tetap ada walau tab
-browser ditutup dan dibuka kembali. Cookie ditambahkan sebagai lapisan
-validasi kedua untuk status login.
-
-**Q: Bagaimana skalabilitas pendekatan ini untuk banyak pengguna sekaligus?**
-A: Karena tidak ada server maupun database terpusat, pendekatan ini cocok
-untuk single-user per device — bukan multi-user real-time. Untuk skala
-produksi, data perlu dipindahkan ke backend dan database sungguhan.
